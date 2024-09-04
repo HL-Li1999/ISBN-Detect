@@ -1,6 +1,7 @@
 # 安装和配置pylon驱动
 
-​	在https://www2.baslerweb.cn/cn/downloads/software-downloads/software-pylon-7-5-0-windows/可下载pylon相机软件套装，该套装包含易于使用的SDK、驱动程序和工具，可通过Windows PC来操作任意一款Basler相机。注意安装软件套装时应选择development开发者版本安装。
+​	在https://www2.baslerweb.cn/cn/downloads/software-downloads/software-pylon-7-5-0-windows/
+可下载pylon相机软件套装，该套装包含易于使用的SDK、驱动程序和工具，可通过Windows PC来操作任意一款Basler相机。注意安装软件套装时应选择development开发者版本安装。
 
 ​	安装完毕后，可在Visual Studio中配置pylon驱动。主要步骤如下，请根据自己的安装路径进行调整：
 

@@ -11,9 +11,9 @@
 
 ​	配置完毕后，可使用pylon相机SDK来操作相机，其中常见的API如下。
 
-# pylon运行系统
+# 1.pylon运行系统
 
-## 初始化pylon运行系统
+## 1.1.初始化pylon运行系统
 
 ```C++
 void PylonInitialize(void)
@@ -21,7 +21,7 @@ void PylonInitialize(void)
 
 初始化pylon运行系统，必须在调用任意其它pylon函数前调用该函数。
 
-## 释放pylon运行系统资源
+## 1.2.释放pylon运行系统资源
 
 ```C++
 void PylonTerminate(bool ShutDownLogging =true)
@@ -33,15 +33,15 @@ void PylonTerminate(bool ShutDownLogging =true)
 
 PylonInitialize/PylonTerminate是引用计数的。对于每次调用PylonInitialize，都需要调用PylonTerminate。
 
-# 访问相机设备
+# 2.访问相机设备
 
-## CTlFactory类
+## 2.1.CTlFactory类
 
 Pylon::CTlFactory类提供访问相机设备的接口
 
 `#include <pylon/TlFactory.h>`
 
-### 初始化CTIFactory对象
+### 2.1.1.初始化CTIFactory对象
 
 ```C++
 static CTlFactory& GetInstance()
@@ -49,7 +49,7 @@ static CTlFactory& GetInstance()
 
 创建传输层单例对象。
 
-### 检索相机设备并获取相机信息
+### 2.1.2.检索相机设备并获取相机信息
 
 ```C++
 virtual int EnumerateDevices(DeviceInfoList_t& list, bool addToList=false)
@@ -65,7 +65,7 @@ virtual int EnumerateDevices(DeviceInfoList_t& list, bool addToList=false)
 
 **返回值：**检索到的设备数。
 
-### 创建IPylonDevice对象
+### 2.1.3.创建IPylonDevice对象
 
 ```C++
 virtual IPylonDevice* CreateDevice(const CDeviceInfo& di)
@@ -79,15 +79,15 @@ virtual IPylonDevice* CreateDevice(const CDeviceInfo& di)
 
 **返回值**：pylon设备对象。
 
-# 相机信息
+# 3.相机信息
 
 Pylon::CDeviceInfo类提供访问和修改相机属性的接口。
 
 `#include <pylon/DeviceInfo.h>`
 
-## CDeviceInfo类
+## 3.1.CDeviceInfo类
 
-### 获取/设置设备型号
+### 3.1.1.获取/设置设备型号
 
 ```C++
 String_t GetModelName() const
@@ -97,7 +97,7 @@ String_t GetModelName() const
 CDeviceInfo& SetModelName(const String_t & ModelNameValue)
 ```
 
-### 获取/设置设备版本
+### 3.1.2.获取/设置设备版本
 
 ```C++
 String_t GetDeviceVersion() const
@@ -107,7 +107,7 @@ String_t GetDeviceVersion() const
 CDeviceInfo & SetDeviceVersion(const String_t & DeviceVersionValue)
 ```
 
-### 获取/设置设备地址：IP+Port
+### 3.1.3.获取/设置设备地址：IP+Port
 
 ```C++
 String_t GetAddress() const
@@ -117,21 +117,21 @@ String_t GetAddress() const
 CDeviceInfo & SetAddress(const String_t & AddressValue)
 ```
 
-## DeviceInfoList类
+## 3.1.4.DeviceInfoList类
 
 Pylon::DeviceInfoList对象为Pylon::CDeviceInfo对象容器，提供了CDeviceInfo类迭代器，可通过[]运算符访问容器元素。
 
 `#include <pylon/Container.h>`
 
-# 相机采集图像
+# 4.相机采集图像
 
-## CInstantCamera类
+## 4.1.CInstantCamera类
 
 Pylon::CInstantCamera类提供使用相机功能的接口，通过上一节创建的IPylonDevice对象来使用对应相机。
 
 `#include <pylon/InstantCamera.h>`
 
-### 关联IPylonDevice对象和CInstantCamera对象
+### 4.1.1.关联IPylonDevice对象和CInstantCamera对象
 
 ```C++
 virtual void Attach(IPylonDevice * pDevice,ECleanup cleanupProcedure=Cleanup_Delete)
@@ -144,7 +144,7 @@ virtual void Attach(IPylonDevice * pDevice,ECleanup cleanupProcedure=Cleanup_Del
 - **pDevice**：要关联的pylon设备。
 - **cleanupProcedure**：设置为Cleanup_Delete时会在销毁该相机对象时销毁Pylon设备。
 
-### 打开相机设备
+### 4.1.2.打开相机设备
 
 ```C++
 virtual void Open()
@@ -152,7 +152,7 @@ virtual void Open()
 
 打开CInstantCamera对象关联的相机设备。
 
-### 相机启动/停止采集图像
+### 4.1.3.相机启动/停止采集图像
 
 ```C++
 virtual void StartGrabbing(EGrabStrategy strategy=GrabStrategy_OneByOne, EGrabLoop grabLoopType=GrabLoop_ProvidedByUser)
@@ -164,7 +164,7 @@ virtual void StopGrabbing()
 
 关联的相机设备启动/停止采集图像。
 
-### 获取相机采集图像
+### 4.1.4.获取相机采集图像
 
 ```C++
 virtual bool RetrieveResult(
@@ -184,13 +184,13 @@ virtual bool RetrieveResult(
 
 **返回值**：采集成功则返回true，否则返回false。
 
-## CInstantCameraArray类
+## 4.2.CInstantCameraArray类
 
 Pylon::CInstantCameraArray类提供多个相机操作的接口，相当于CInstantCamera对象的数列，可通过[]运算符访问数列元素。
 
 `#include <pylon/InstantCameraArray.h>`
 
-### 初始化
+### 4.2.1.初始化
 
 ```C++
 virtual void Initialize(size_t numberOfCameras)
@@ -202,7 +202,7 @@ virtual void Initialize(size_t numberOfCameras)
 
 - **numberOfCameras**：该数列可容纳的CInstantCamera对象的数目。
 
-### 相机启动/停止采集图像
+### 4.2.2.相机启动/停止采集图像
 
 ```C++
 virtual void StartGrabbing(EGrabStrategy strategy=GrabStrategy_OneByOne, EGrabLoop grabLoopType=GrabLoop_ProvidedByUser)
@@ -214,15 +214,15 @@ virtual void StopGrabbing()
 
 数列所有相机启动/停止采集图像。
 
-# 采集的图像信息
+# 5.采集的图像信息
 
-## CGrabResultData类
+## 5.1.CGrabResultData类
 
 一个CGrabResultPtr对象为一个Pylon::CGrabResultData对象的指针，因此CGrabResultPtr对象可通过$\rightarrow$运算符来调用Pylon::CGrabResultData类成员函数。
 
 `#include <pylon/GrabResultData.h>`
 
-### 成功采集到图像
+### 5.1.1.成功采集到图像
 
 ```C++
 bool GrabSucceeded() const
@@ -230,7 +230,7 @@ bool GrabSucceeded() const
 
 **返回值**：如果成功抓取图像，则返回true；如果出现错误，则返回false。
 
-### 获取相机上下文值
+### 5.1.2.获取相机上下文值
 
 ```C++
 intptr_t GetCameraContext() const
@@ -238,7 +238,7 @@ intptr_t GetCameraContext() const
 
 **返回值**：分配给相机对象的上下文值，该值可用于后续显示采集到的图像。
 
-### 获取图像高度、宽度
+### 5.1.3.获取图像高度、宽度
 
 ```C++
 uint32_t GetHeight() const
@@ -252,7 +252,7 @@ uint32_t GetWidth() const
 
 **返回值**：图像的宽度。
 
-### 获取图像缓冲区
+### 5.1.4.获取图像缓冲区
 
 ```C++
 void * GetBuffer() const
@@ -260,7 +260,7 @@ void * GetBuffer() const
 
 **返回值**：图像的缓冲区指针。
 
-### 获取图像采集的错误信息
+### 5.1.5.获取图像采集的错误信息
 
 ```C++
 String_t GetErrorDescription() const
@@ -268,15 +268,15 @@ String_t GetErrorDescription() const
 
 **返回值**：采集图像出现错误时，具体的错误信息。
 
-# 转换图像格式
+# 6.转换图像格式
 
-## Pylon::CImageFormatConverter类
+## 6.1.Pylon::CImageFormatConverter类
 
 Pylon::CImageFormatConverter类通过将源图像转换为另一种格式来创建新图像。
 
 `#include <pylon/ImageFormatConverter.h>`
 
-### 设置输出图像属性
+### 6.1.1.设置输出图像属性
 
 通过CImageFormatConverter的成员属性来设置转换器输出图像属性，主要的成员属性如下：
 
@@ -289,7 +289,7 @@ Pylon::CImageFormatConverter类通过将源图像转换为另一种格式来创�
 | Pylon::IIntegerEx &                                | **OutputPaddingX**      | 每行末尾的附加数据字节数-适用于:ImageFormatConverter。       |
 | IOutputPixelFormatEnum &                           | **OutputPixelFormat**   | 输出图像的像素数据格式。                                     |
 
-### 转换图像格式
+### 6.1.2.转换图像格式
 
 ```C++
 virtual void Convert(IReusableImage & destinationImage, const IImage & sourceImage)
@@ -303,17 +303,17 @@ virtual void Convert(IReusableImage & destinationImage, const IImage & sourceIma
 
 - **sourceImage**：源图像，例如CPylonImage, CPylonBitmapImage，或CGrabResultPtr。
 
-# 图像窗口
+# 7.图像窗口
 
 由于opencv不支持usb3.0协议，采用opencv api采集或显示图像可能会出现问题（比如显示延迟等）。
 
-## CPylonImageWindow类
+## 7.1.CPylonImageWindow类
 
 Pylon::CPylonImageWindow类提供图像窗口的相关接口。
 
 `#include <pylon/PylonGUI.h>`
 
-### 创建一个窗口
+### 7.1.1.创建一个窗口
 
 ```C++
 void Create(
@@ -335,7 +335,7 @@ void Create(
 - **nWidth**：窗口在屏幕坐标中的宽度。
 - **nHeight**： 窗口在屏幕坐标中的高度。
 
-### 获取窗口句柄
+### 7.1.2.获取窗口句柄
 
 ```C++
 HWND GetWindowHandle() const
@@ -343,7 +343,7 @@ HWND GetWindowHandle() const
 
 返回图像窗口的窗口句柄(HWND)。
 
-### 设置显示图像
+### 7.1.3.设置显示图像
 
 ```C++
 void SetImage(const Pylon::IImage & image)
@@ -355,7 +355,7 @@ void SetImage(const Pylon::IImage & image)
 
 - **image**：要在窗口中显示的内容，可为任意Pylon::IImage的子类对象，如CPylonImage或CPylonBitmapImage对象。
 
-### 显示图像窗口
+### 7.1.4.显示图像窗口
 
 ```C++
 void Show(int nShow=showDefault) const
@@ -363,9 +363,9 @@ void Show(int nShow=showDefault) const
 
 显示图像窗口。
 
-# 例子
+# 8.例子
 
-## 使用pylon窗口显示相机图像
+## 8.1.使用pylon窗口显示相机图像
 
 ```C++
 #include <pylon/PylonIncludes.h>
@@ -446,7 +446,7 @@ int main()
 
 <img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240902181515346.png" alt="image-20240902181513412" style="zoom:33%;" />
 
-## 使用OpenCV显示相机图像
+## 8.2.使用OpenCV显示相机图像
 
 ```C++
 #include <pylon/PylonIncludes.h>

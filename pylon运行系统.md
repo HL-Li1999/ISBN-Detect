@@ -1,3 +1,15 @@
+# 安装和配置pylon驱动
+
+​	在https://www2.baslerweb.cn/cn/downloads/software-downloads/software-pylon-7-5-0-windows/可下载pylon相机软件套装，该套装包含易于使用的SDK、驱动程序和工具，可通过Windows PC来操作任意一款Basler相机。注意安装软件套装时应选择development开发者版本安装。
+
+​	安装完毕后，可在Visual Studio中配置pylon驱动。主要步骤如下，请根据自己的安装路径进行调整：
+
+>- 在环境变量中添加F:\Host\Driver\Basler\Development\Assemblies\Basler.Pylon\x64，F:\Host\Driver\Basler\Runtime\x64
+>- 在外部包含目录中添加F:\Host\Driver\Basler\Development\include
+>- 在库目录在添加F:\Host\Driver\Basler\Development\lib\x64
+
+​	配置完毕后，可使用pylon相机SDK来操作相机，其中常见的API如下。
+
 # pylon运行系统
 
 ## 初始化pylon运行系统
@@ -130,6 +142,14 @@ virtual void Attach(IPylonDevice * pDevice,ECleanup cleanupProcedure=Cleanup_Del
 
 - **pDevice**：要关联的pylon设备。
 - **cleanupProcedure**：设置为Cleanup_Delete时会在销毁该相机对象时销毁Pylon设备。
+
+### 打开相机设备
+
+```C++
+virtual void Open()
+```
+
+打开CInstantCamera对象关联的相机设备。
 
 ### 相机启动/停止采集图像
 
@@ -282,7 +302,150 @@ virtual void Convert(IReusableImage & destinationImage, const IImage & sourceIma
 
 - **sourceImage**：源图像，例如CPylonImage, CPylonBitmapImage，或CGrabResultPtr。
 
-# 例子：使用OpenCV显示相机图像
+# 图像窗口
+
+由于opencv不支持usb3.0协议，采用opencv api采集或显示图像可能会出现问题（比如显示延迟等）。
+
+## CPylonImageWindow类
+
+Pylon::CPylonImageWindow类提供图像窗口的相关接口。
+
+`#include <pylon/PylonGUI.h>`
+
+### 创建一个窗口
+
+```C++
+void Create(
+    size_t winIndex,
+    int x =useDefault,
+    int y =useDefault,
+    int nWidth =useDefault,
+    int nHeight =useDefault
+)
+```
+
+根据给定属性创建一个窗口。
+
+**参数**：
+
+- **winIndex**：窗口索引，有效值为0~31。
+- **x**：窗口左上角的x坐标(屏幕坐标)。
+- **y**：窗口左上角的y坐标(屏幕坐标)。
+- **nWidth**：窗口在屏幕坐标中的宽度。
+- **nHeight**： 窗口在屏幕坐标中的高度。
+
+### 获取窗口句柄
+
+```C++
+HWND GetWindowHandle() const
+```
+
+返回图像窗口的窗口句柄(HWND)。
+
+### 设置显示图像
+
+```C++
+void SetImage(const Pylon::IImage & image)
+```
+
+设置图像窗口的显示内容。
+
+**参数**：
+
+- **image**：要在窗口中显示的内容，可为任意Pylon::IImage的子类对象，如CPylonImage或CPylonBitmapImage对象。
+
+### 显示图像窗口
+
+```C++
+void Show(int nShow=showDefault) const
+```
+
+显示图像窗口。
+
+# 例子
+
+## 使用pylon窗口显示相机图像
+
+```C++
+#include <pylon/PylonIncludes.h>
+#include <pylon/TlFactory.h>
+#include <opencv2/opencv.hpp>
+#include <pylon/PylonGUI.h>`
+
+using namespace Pylon;
+using namespace cv;
+
+int main()
+{
+	//初始化pylon运行系统
+	PylonInitialize();
+
+	CTlFactory& instance = CTlFactory::GetInstance();
+
+	//检索相机设备并获取相机信息
+	DeviceInfoList_t deviceList;
+	int deviceNum = instance.EnumerateDevices(deviceList);
+	std::cout << "检测到相机数：" << deviceNum << std::endl;
+
+	CInstantCameraArray camera;
+	camera.Initialize(deviceNum);
+
+	//打印相机信息
+	for (int i = 0; i < deviceNum; i++)
+	{
+		std::cout << i+1 << std::endl;
+		std::cout << "相机型号：" << deviceList[i].GetModelName() << std::endl;
+		std::cout << "设备版本：" << deviceList[i].GetDeviceVersion() << std::endl;
+		
+		IPylonDevice* pylonDevice = instance.CreateDevice(deviceList[i]);
+		camera[i].Attach(pylonDevice);
+	}
+
+	int index = 0;
+
+	//打印图像信息
+
+	GenApi::INodeMap& nodemap = camera[index].GetNodeMap();
+	camera[index].Open();
+	GenApi::CIntegerPtr width = nodemap.GetNode("Width");
+	GenApi::CIntegerPtr height = nodemap.GetNode("Height");
+	std::cout << "图像宽度为" << (int)width->GetValue() << std::endl;
+	std::cout << "图像高度为" << (int)height->GetValue() << std::endl;
+
+	CImageFormatConverter formatConverter;
+	formatConverter.OutputPixelFormat = PixelType_BGR8packed;
+	CPylonImage pylonImage;
+
+	camera[index].StartGrabbing();
+
+	CPylonImageWindow imageWindow;
+	imageWindow.Create(1, 0, 0, 1920, 1200);
+
+	CGrabResultPtr grabResult;
+	//相机采集图像并转换格式
+	while (camera[index].IsGrabbing())
+	{
+		camera[index].RetrieveResult(5000, grabResult);
+
+		if (grabResult->GrabSucceeded())
+		{
+			formatConverter.Convert(pylonImage, grabResult);
+			imageWindow.SetImage(pylonImage);
+			imageWindow.Show();
+		}
+	}
+
+	//释放pylon运行系统资源
+	camera[index].Close();
+	PylonTerminate();	
+}
+```
+
+![image-20240902180949388](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240902180949388.png)
+
+<img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240902181515346.png" alt="image-20240902181513412" style="zoom:33%;" />
+
+## 使用OpenCV显示相机图像
 
 ```C++
 #include <pylon/PylonIncludes.h>
@@ -322,6 +485,7 @@ int main()
 	CGrabResultPtr grabResult;
 
 	//打印图像信息
+    camera[index].Open();
 	camera[index].StartGrabbing();
 	if (camera[index].RetrieveResult(5000, grabResult))
 	{
@@ -353,6 +517,7 @@ int main()
 }
 ```
 
-<img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240823120058969.png" alt="image-20240823120058969" style="zoom:67%;" />
+<img src="C:/Users/llll/AppData/Roaming/Typora/typora-user-images/image-20240823120058969.png" alt="image-20240823120058969" style="zoom:67%;" />
 
-<img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240823120328084.png" alt="image-20240823120324020" style="zoom: 33%;" />
+<img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240902181650887.png" alt="image-20240902181650887" style="zoom:33%;" />
+

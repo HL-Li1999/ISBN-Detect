@@ -1,5 +1,7 @@
 ISBN-Detect：采用Basler相机采集包含ISBN码的图像，输出识别结果，详情可见`ISBN-Detect说明.md`。
+
 MatProcess：采用OpenCV开源库对输入图像进行处理，输出ISBN数字字符截取结果。
+
 OCR-Num：采用pytorch对印刷体数字数据集用机器学习判别模型进行训练，将得到的权重矩阵输出为txt文件。
 
 

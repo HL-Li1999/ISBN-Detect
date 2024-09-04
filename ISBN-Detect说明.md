@@ -1,6 +1,6 @@
 # 概述
 
-​	<img src="C:\Users\llll\AppData\Roaming\Typora\typora-user-images\image-20240903151724745.png" alt="image-20240903151724745" style="zoom: 80%;" />
+​	<img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903151724745.png" alt="image-20240903151724745" style="zoom: 80%;" />
 
 ​	ISBN-Detect是一款用MFC开发的用于识别ISBN码的程序，使用Blaser相机采集图像，而后显示识别出的图像中的ISBN码。程序主要包括三个部分：
 

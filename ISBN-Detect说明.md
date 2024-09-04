@@ -21,7 +21,7 @@
 
 ​	采集图像窗口如图。
 
-<img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903154751023.png" alt="image-20240903152007644" style="zoom:67%;" />
+![image-20240903170845334](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903152007644.png)
 
 # 图像处理
 
@@ -47,11 +47,11 @@
 
 ![image-20240903152926280](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903152926280.png)
 
-![image-20240903154751023](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903154923501.png)
+<img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903154751023.png" alt="image-20240903152007644"  />
 
 ![image-20240903152838829](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903152838829.png)
 
-![image-20240903154923501](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903152848950.png)
+![image-20240903154751023](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903154923501.png)
 
 ## 截取条形码区域
 
@@ -69,19 +69,19 @@
 
 ​	通过直线检测可知道每条直线的角度（直线法线和图像x轴之间的角度），距离（直线到图像原点的距离）。对这些角度求直方图，取频率最大的那个bin求平均值，可以得到去除一些非条形码直线的影响，求出条形码直线法线和图像x轴之间的角度，进而求出图像应该顺时针旋转多少度才能使得条形码直线垂直。
 
-![image-20240903160448690](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903162245418.png)
+![image-20240903162245418](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903160448690.png)
 
 ### 获取条形码的上下边界
 
 ​	旋转图像后，可以通过图像每一行（即同一高度）的直线数来估计条形码上下边界。可以看出条形码上边界的上方直线数要远小于上边界的下方直线数，下边界的上方直线数要远大于下方直线数。因此可统计出每一行的直线数，然后计算直线数的直方图，取频率最大的那个bin的平均值作为阈值来指示条形码高度的直线数，当直线数小于k·阈值时不为条形码高度，大于k·阈值时为条形码高度。如图为判断出的条形码上下边界。
 
-![image-20240903152848950](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903171002640.png)
+![image-20240903154923501](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903152848950.png)
 
 ### 获取条形码左右边界
 
 ​	如下图为截取条形码上下边界之间的图像区域的二值图。
 
-![image-20240903162245418](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903160448690.png)
+![image-20240903160448690](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903162245418.png)
 
 ​	由图可以看出条形码区域的分布特点有：
 
@@ -101,28 +101,28 @@
 
 ​	如图为按照上下边界和左右边界截取出的条形码区域。
 
-![image-20240903171002640](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903171337836.png)
+![image-20240903152848950](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903171002640.png)
 
 ### 截取数字字符
 
 ​	数字区域位于条形码区域之下，且数字区域高度和条形码区域高度具有一定的比例关系，截取出的数字区域如图。
 
-![image-20240903171337836](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903153240975.png)
+![image-20240903171002640](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903171337836.png)
 
 ​	使用OpenCV识别数字区域所有形状的轮廓，并用矩形框起来。如图，可以看出，除了数字会被框出，还有条形码部分也会被框出。这些部分具有宽度小、几乎整个矩形均为黑像素的特点，利用这些特点可以滤除条形码部分。
 
-<img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903175120149.png" alt="image-20240903172058542" style="zoom:50%;" />
+![image-20240903175120149](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903172058542.png)
 
 ​	滤除条形码部分后，将剩余的矩形框中的图像截取出来如下图。
 
-![image-20240903153240975](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903170845334.png)
+![image-20240903171337836](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903153240975.png)
 
 # 字符识别
 
 ​	首先使用OpenCV对截取到的印刷体数字进行处理（腐蚀、膨胀、剪裁），保存为印刷体数字数据集。使用pytorch建立机器学习判别模型，对数据集进行训练。如图为误差函数值和迭代次数之间的关系，在误差函数值小于1时停止迭代。
 
-![image-20240903175120149](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903172058542.png)
+<img src="https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903175120149.png" alt="image-20240903172058542" style="zoom:50%;" />
 
 ​	将训练结果（即权重矩阵）保存为一个txt文件，在程序中读取该文件，并输入截取到的数字图像进行识别，可以得到结果如下。
 
-![image-20240903170845334](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903152007644.png)
+![image-20240903153240975](https://raw.githubusercontent.com/HL-Li1999/CloudPic/master/img/image-20240903170845334.png)

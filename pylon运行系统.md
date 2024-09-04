@@ -117,7 +117,7 @@ String_t GetAddress() const
 CDeviceInfo & SetAddress(const String_t & AddressValue)
 ```
 
-## 3.1.4.DeviceInfoList类
+## 3.2.DeviceInfoList类
 
 Pylon::DeviceInfoList对象为Pylon::CDeviceInfo对象容器，提供了CDeviceInfo类迭代器，可通过[]运算符访问容器元素。
 
